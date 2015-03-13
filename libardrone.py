@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 # Copyright (c) 2011 Bastian Venthur
 #
 # Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -41,7 +43,7 @@ __author__ = "Bastian Venthur"
 ARDRONE_NAVDATA_PORT = 5554
 ARDRONE_VIDEO_PORT = 5555
 ARDRONE_COMMAND_PORT = 5556
-
+#ARDRONE_CONTROL_PORT = 5559
 
 class ARDrone(object):
     """ARDrone Class.
@@ -170,7 +172,7 @@ class ARDrone(object):
         self.ipc_thread.join()
         self.lock.release()
         
-    def move(self,lr, fb, vv, va):
+    def move(self, lr, fb, vv, va):
         """Makes the drone move (translate/rotate).
 
  	   Parameters:
@@ -181,6 +183,9 @@ class ARDrone(object):
 	   va -- angular speed: float [-1..1] negative: spin left, positive: spin 
         	right"""
         self.at(at_pcmd, True, lr, fb, vv, va)
+
+    def led_anim(self, anim, f, d):
+        self.at(at_led, anim, f, d)
 
 
 ###############################################################################
@@ -198,9 +203,11 @@ def at_ref(seq, takeoff, emergency=False):
     """
     p = 0b10001010101000000000000000000
     if takeoff:
-        p += 0b1000000000
+        p += 0b00000000000000000001000000000
+        #p = 0b10001010101000000001X00000000
     if emergency:
-        p += 0b0100000000
+        p += 0b00000000000000000000100000000
+        #p = 0b1000101010100000000X100000000
     at("REF", seq, [p])
 
 def at_pcmd(seq, progressive, lr, fb, vv, va):
@@ -288,14 +295,14 @@ def at_led(seq, anim, f, d):
     f -- ?: frequence in HZ of the animation
     d -- Integer: total duration in seconds of the animation
     """
-    pass
+    at("CONFIG", seq, "\"leds:leds_anim\"", "\"4,1073741824,1\"")
 
 def at_anim(seq, anim, d):
     """
     Makes the drone execute a predefined movement (animation).
 
     Parameters:
-    seq -- sequcence number
+    seq -- sequence number
     anim -- Integer: animation to play
     d -- Integer: total duration in sections of the animation
     """

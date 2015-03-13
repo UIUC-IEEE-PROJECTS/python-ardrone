@@ -36,11 +36,6 @@ import datetime
 import struct
 import sys
 
-try:
-    import psyco
-except ImportError:
-    print "Please install psyco for better video decoding performance."
-
 
 # from zig-zag back to normal
 ZIG_ZAG_POSITIONS = array.array('B',
@@ -532,17 +527,6 @@ def read_picture(data):
     assert(eos == 0b0000000000000000111111)
     t2 = datetime.datetime.now()
     return width, height, ''.join(image), (t2 - t).microseconds / 1000000.
-
-
-try:
-    psyco.bind(BitReader)
-    psyco.bind(get_block)
-    psyco.bind(get_gob)
-    psyco.bind(get_mb)
-    psyco.bind(inverse_dct)
-    psyco.bind(read_picture)
-except NameError:
-    print "Unable to bind video decoding methods with psyco. Proceeding anyways, but video decoding will be slow!"
 
 
 def main():
