@@ -295,7 +295,7 @@ def at_led(seq, anim, f, d):
     f -- ?: frequence in HZ of the animation
     d -- Integer: total duration in seconds of the animation
     """
-    at("CONFIG", seq, "\"leds:leds_anim\"", "\"4,1073741824,1\"")
+    at_config(seq, "\"leds:leds_anim\"", "\"4,1073741824,1\"")
 
 def at_anim(seq, anim, d):
     """
